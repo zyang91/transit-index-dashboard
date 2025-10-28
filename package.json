@@ -1,7 +1,7 @@
 {
   "name": "dashboard-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "Philadelphia Transit Index Dashboard - An interactive web dashboard for evaluating neighborhoods based on transit accessibility",
   "main": "index.js",
   "type": "module",
   "directories": {},
@@ -9,8 +9,8 @@
     "css-lint": "stylelint --color  \"**/*.css\"",
     "js-lint": "eslint --color **/*.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Zhanchao Yang",
+  "license": "MIT",
   "devDependencies": {
     "eslint": "^8.48.0",
     "eslint-config-google": "^0.14.0",

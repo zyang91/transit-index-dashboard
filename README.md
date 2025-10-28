@@ -1,6 +1,6 @@
 # Philadelphia Transit Index Dashboard
 
-An interactive web dashboard that helps housing seekers and tenants in Philadelphia evaluate neighborhoods based on transit accessibility. Through spatial analysis, this dashboard calculates a transit index at the census tract level and provides a breakdown of key factors that influence transit access.
+An interactive web dashboard that helps housing seekers and tenants in Philadelphia evaluate neighborhoods based on transit accessibility. The dashboard calculates a transit index at the census tract level through spatial analysis and provides a breakdown of key factors that influence transit access.
 
 ## Purpose
 
