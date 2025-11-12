@@ -11,7 +11,11 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div id="map"></div>
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
-    <script src="js/index.js"></script>
+    <!-- Set your Mapbox access token here (replace the placeholder) -->
+    <script>window.MAPBOX_TOKEN = '<YOUR_MAPBOX_ACCESS_TOKEN_HERE>';</script>
+    <!-- index.js is now an ES module that imports ./map.js -->
+    <script type="module" src="js/index.js"></script>
 </body>
 </html>
