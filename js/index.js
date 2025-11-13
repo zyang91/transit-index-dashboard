@@ -2,12 +2,12 @@
 import { initMap } from './map.js';
 
 function start() {
-	// Initialize the map with defaults (reads token from window.MAPBOX_TOKEN)
-	initMap();
+  // Initialize the map with defaults (reads token from window.MAPBOX_TOKEN)
+  initMap();
 }
 
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', start);
+  document.addEventListener('DOMContentLoaded', start);
 } else {
-	start();
+  start();
 }
