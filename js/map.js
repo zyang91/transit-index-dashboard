@@ -12,7 +12,22 @@ function initMap(options = {}) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiemhhbmNoYW8iLCJhIjoiY21nYm1mOGNpMTlycTJtb2xuczUwdjY1aCJ9.KRjlJ3Siuf2p0OKSsngcGw';
 
   const map = new mapboxgl.Map({ container, style, center, zoom });
-  map.addControl(new mapboxgl.NavigationControl());
+
+  // Disable user zoom controls: prevent scroll-wheel, double-click, touch-pinch zooming.
+  // We intentionally do NOT add the NavigationControl (zoom buttons) so users cannot change zoom.
+  try {
+    map.scrollZoom.disable();
+    map.doubleClickZoom.disable();
+    // touchZoomRotate exists in newer mapbox-gl versions and covers touch gestures
+    if (map.touchZoomRotate && typeof map.touchZoomRotate.disable === 'function') {
+      map.touchZoomRotate.disable();
+    }
+    // also disable box zoom to avoid accidental zooming
+    if (map.boxZoom && typeof map.boxZoom.disable === 'function') map.boxZoom.disable();
+    if (map.keyboard && typeof map.keyboard.disable === 'function') map.keyboard.disable();
+  } catch (e) {
+    // ignore if any control is not present
+  }
 
   map.on('load', () => {
     // Fetch and add GeoJSON from the data folder
@@ -64,10 +79,53 @@ function initMap(options = {}) {
           map.getCanvas().style.cursor = '';
         });
 
-        // Click behavior: notify caller with the clicked feature (or null if click on empty space)
+        // Click behavior: notify caller and zoom to the clicked feature's bounds.
         map.on('click', 'transit-index-fill', (e) => {
           if (!e.features || !e.features.length) return;
           const feat = e.features[0];
+
+          // Compute tight bounding box for the feature geometry (supports Polygon and MultiPolygon)
+          function featureBBox(f) {
+            const geom = f.geometry || {};
+            const coords = geom.coordinates || [];
+            let minX = Infinity;
+            let minY = Infinity;
+            let maxX = -Infinity;
+            let maxY = -Infinity;
+
+            function scan(arr) {
+              // arr may be nested arrays (for polygons/multipolygons)
+              for (const el of arr) {
+                if (!el) continue;
+                if (typeof el[0] === 'number' && typeof el[1] === 'number') {
+                  const x = el[0];
+                  const y = el[1];
+                  if (x < minX) minX = x;
+                  if (y < minY) minY = y;
+                  if (x > maxX) maxX = x;
+                  if (y > maxY) maxY = y;
+                } else if (Array.isArray(el)) {
+                  scan(el);
+                }
+              }
+            }
+
+            scan(coords);
+            // fallback to feature center if bbox is invalid
+            if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+              const center = f.bbox && f.bbox.length === 4 ? [(f.bbox[0] + f.bbox[2]) / 2, (f.bbox[1] + f.bbox[3]) / 2] : null;
+              if (center) return [[center[0] - 0.01, center[1] - 0.01], [center[0] + 0.01, center[1] + 0.01]];
+              return null;
+            }
+            return [[minX, minY], [maxX, maxY]];
+          }
+
+          const bbox = featureBBox(feat);
+          if (bbox) {
+            // Fit bounds with padding. Limit maxZoom to avoid over-zooming on tiny polygons.
+            map.fitBounds(bbox, { padding: 20, maxZoom: 14, duration: 700 });
+          }
+
           if (typeof onFeatureClick === 'function') onFeatureClick(feat);
         });
 
@@ -76,6 +134,12 @@ function initMap(options = {}) {
           const feats = map.queryRenderedFeatures(e.point, { layers: ['transit-index-fill'] });
           if (!feats || feats.length === 0) {
             if (typeof onFeatureClick === 'function') onFeatureClick(null);
+            // Reset view to the initial center/zoom when clicking empty space
+            try {
+              map.easeTo({ center, zoom, duration: 700 });
+            } catch (err) {
+              // ignore
+            }
           }
         });
       })
