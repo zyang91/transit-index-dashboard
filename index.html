@@ -10,12 +10,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
+</html>
 <body>
-    <div id="map"></div>
+    <header class="app-header">
+        <div class="container">
+            <h1>Transit Index Dashboard</h1>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+        <aside class="sidebar">
+            <section id="chart"><!-- chart.js can render here -->
+                <h2>Charts</h2>
+                <div class="charts-row">
+                    <div id="chart-time" class="chart-box"></div>
+                    <div id="chart-mode" class="chart-box"></div>
+                </div>
+            </section>
+            <section id="info">
+                <h3>Info</h3>
+                <p>Additional text and KPIs go here.</p>
+            </section>
+        </aside>
+    </main>
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
-    <!-- Set your Mapbox access token here (replace the placeholder) -->
-    <script>window.MAPBOX_TOKEN = '<YOUR_MAPBOX_ACCESS_TOKEN_HERE>';</script>
-    <!-- index.js is now an ES module that imports ./map.js -->
+    <!-- D3 (for charts) - loaded as a global d3 variable -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="js/index.js"></script>
 </body>
 </html>

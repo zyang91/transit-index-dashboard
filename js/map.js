@@ -6,6 +6,7 @@ function initMap(options = {}) {
   const zoom = options.zoom || 10;
   const geojsonUrl = options.geojsonUrl || 'data/phila_transit_index.geojson';
   const colorProperty = options.colorProperty || 'color';
+  const onFeatureClick = options.onFeatureClick || null; // callback(feature) or callback(null) to reset
 
   // Expect token to be set on window.MAPBOX_TOKEN (index.html).
   mapboxgl.accessToken = 'pk.eyJ1IjoiemhhbmNoYW8iLCJhIjoiY21nYm1mOGNpMTlycTJtb2xuczUwdjY1aCJ9.KRjlJ3Siuf2p0OKSsngcGw';
@@ -38,6 +39,7 @@ function initMap(options = {}) {
           paint: { 'line-color': '#ffffff', 'line-width': 1 },
         });
 
+
         const hoverPopup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false });
 
         // Show popup on mousemove over the fill layer
@@ -47,9 +49,9 @@ function initMap(options = {}) {
           const feat = e.features[0];
           // Only show Name and Total (total residents) in the popup
           const props = feat.properties || {};
-          // Some datasets may use different casing for keys; try common variants
-          const name = props.NAME ||'Unknown';
-          const total = (props.TOTAL !== undefined && props.TOTAL !== null)
+          // Try common key variants for name and total
+          const name = props.Name || props.name || props.NAME || 'Unknown';
+          const total = (props.Total !== undefined && props.Total !== null)
             ? props.Total
             : (props.total !== undefined && props.total !== null ? props.total : 'N/A');
           const html = `<div style="font-size:13px; line-height:1.2;"><strong>${name}</strong><br/>Total Residents: ${total}</div>`;
@@ -60,6 +62,21 @@ function initMap(options = {}) {
         map.on('mouseleave', 'transit-index-fill', () => {
           hoverPopup.remove();
           map.getCanvas().style.cursor = '';
+        });
+
+        // Click behavior: notify caller with the clicked feature (or null if click on empty space)
+        map.on('click', 'transit-index-fill', (e) => {
+          if (!e.features || !e.features.length) return;
+          const feat = e.features[0];
+          if (typeof onFeatureClick === 'function') onFeatureClick(feat);
+        });
+
+        // If user clicks elsewhere, reset charts (send null)
+        map.on('click', (e) => {
+          const feats = map.queryRenderedFeatures(e.point, { layers: ['transit-index-fill'] });
+          if (!feats || feats.length === 0) {
+            if (typeof onFeatureClick === 'function') onFeatureClick(null);
+          }
         });
       })
       .catch((err) => console.error('Failed to load GeoJSON:', err));
