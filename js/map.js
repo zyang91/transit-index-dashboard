@@ -1,7 +1,7 @@
 /* global mapboxgl */
 function initMap(options = {}) {
   const container = options.container || 'map';
-  const style = options.style || 'mapbox://styles/mapbox/streets-v12';
+  const style = options.style || 'mapbox://styles/mapbox/light-v11';
   const center = options.center || [-75.1652, 39.9526];
   const zoom = options.zoom || 10;
   const geojsonUrl = options.geojsonUrl || 'data/phila_transit_index.geojson';
@@ -53,6 +53,103 @@ function initMap(options = {}) {
           source: 'transit-index',
           paint: { 'line-color': '#ffffff', 'line-width': 1 },
         });
+
+        function updateThresholdFilter(maxThreshold) {
+          // If nothing selected, restore original styling
+          if (maxThreshold == null && maxThreshold !== 0) {
+            map.setPaintProperty(
+              'transit-index-fill',
+              'fill-color',
+              ['coalesce', ['get', colorProperty], '#888888'],
+            );
+            map.setPaintProperty('transit-index-fill', 'fill-opacity', 0.7);
+            map.setPaintProperty('transit-index-line', 'line-color', '#ffffff');
+            return;
+          }
+
+          // Features with index < maxThreshold get greyed out
+          const fillExpr = [
+            'case',
+            ['<', ['to-number', ['get', 'index']], maxThreshold],
+            '#d6d6d6',
+            ['coalesce', ['get', colorProperty], '#888888'],
+          ];
+
+          const lineExpr = [
+            'case',
+            ['<', ['to-number', ['get', 'index']], maxThreshold],
+            '#bdbdbd',
+            '#ffffff',
+          ];
+
+          map.setPaintProperty('transit-index-fill', 'fill-color', fillExpr);
+          map.setPaintProperty('transit-index-line', 'line-color', lineExpr);
+        }
+
+        // Wire up checkboxes and optional slider
+        try {
+          const boxes = Array.from(document.querySelectorAll('.threshold-checkbox'));
+          const slider = document.querySelector('.threshold-slider');
+          const valDisplay = document.querySelector('.threshold-value');
+
+          if (!boxes.length && !slider) {
+            // nothing to wire up
+            return;
+          }
+
+          const computeMaxSelected = () => {
+            const vals = boxes
+              .filter((b) => b.checked)
+              .map((b) => Number(b.value))
+              .filter((v) => !Number.isNaN(v));
+
+            return vals.length ? Math.max(...vals) : null;
+          };
+
+          // Apply based on current checkbox selection and keep slider in sync
+          const applyFromCheckboxes = () => {
+            const m = computeMaxSelected();
+            updateThresholdFilter(m);
+
+            if (slider) {
+              if (m != null) {
+                slider.value = String(m);
+                if (valDisplay) valDisplay.textContent = m;
+              } else {
+                slider.value = slider.min || '1';
+                if (valDisplay) valDisplay.textContent = '';
+              }
+            }
+          };
+
+          // When a checkbox changes, recompute threshold
+          boxes.forEach((b) => {
+            b.addEventListener('change', applyFromCheckboxes);
+          });
+
+          // Optional: slider also controls threshold and pushes back to checkboxes
+          if (slider) {
+            slider.addEventListener('input', (e) => {
+              const v = Number(e.target.value);
+              if (Number.isNaN(v)) return;
+
+              updateThresholdFilter(v);
+
+              // Check all boxes with value <= slider value
+              boxes.forEach((b) => {
+                const bv = Number(b.value);
+                b.checked = !Number.isNaN(bv) && bv <= v;
+              });
+
+              if (valDisplay) valDisplay.textContent = v;
+            });
+          }
+
+          // Initial state
+          applyFromCheckboxes();
+        } catch (e) {
+          console.error('Error wiring up threshold controls:', e);
+        }
 
 
         const hoverPopup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false });
