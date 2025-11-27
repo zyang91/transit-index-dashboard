@@ -1,7 +1,7 @@
 const CENSUS_ENDPOINT = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress';
 const DEFAULT_BENCHMARK = 'PUBLIC_AR_CURRENT';
 const SUGGESTION_MIN_CHARS = 3;
-const SUGGESTION_LIMIT = 5;
+const SUGGESTION_LIMIT = 10;
 const SUGGESTION_DEBOUNCE_MS = 350;
 const CITY_SUFFIX = 'Philadelphia, PA';
 

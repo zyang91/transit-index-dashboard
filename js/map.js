@@ -2,8 +2,8 @@
 function initMap(options = {}) {
   const container = options.container || 'map';
   const style = options.style || 'mapbox://styles/mapbox/light-v11';
-  const center = options.center || [-75.1652, 39.9526];
-  const zoom = options.zoom || 10;
+  const center = options.center || [-75.1352, 39.9899];
+  const zoom = options.zoom || 10.5;
   const geojsonUrl = options.geojsonUrl || 'data/phila_transit_index.geojson';
   const colorProperty = options.colorProperty || 'color';
   const onFeatureClick = options.onFeatureClick || null; // callback(feature) or callback(null) to reset
