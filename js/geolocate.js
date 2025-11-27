@@ -1,6 +1,6 @@
 let googleLoaderPromise = null;
 
-const PUBLIC_GOOGLE_MAPS_KEY = 'AIzaSyB_tq-KyrsmqA6aC3yJrx9yH2PJeBGLfzA';
+const PUBLIC_GOOGLE_MAPS_KEY = 'AIzaSyC7Tu9W6-BUZzBz-EzpKoNjZeWNc_X7Xd0A';
 
 function resolveApiKey(explicitKey) {
 	return explicitKey || PUBLIC_GOOGLE_MAPS_KEY;
