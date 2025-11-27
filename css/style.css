@@ -68,6 +68,48 @@ h1, h2, h3, h4 {
   z-index: 10;
 }
 
+.search-panel {
+  margin-bottom: 16px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-input {
+  width: 100%;
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #0f5132;
+  box-shadow: 0 0 0 3px rgb(15 81 50 / 15%);
+  outline: none;
+}
+
+.search-input.input-error {
+  border-color: #b42318;
+  box-shadow: 0 0 0 3px rgb(180 35 24 / 15%);
+}
+
+.search-hint {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .charts-row {
   display: flex;
   flex-direction: column;

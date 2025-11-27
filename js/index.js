@@ -1,13 +1,16 @@
 // Entry module: import the map initializer and call it once the DOM is ready.
 import { initMap } from './map.js';
 import { initCharts, updateCharts } from './chart.js';
+import { initGeolocate } from './geolocate.js';
 
 function start() {
   // Initialize the map with defaults (reads token from window.MAPBOX_TOKEN)
   // Initialize charts first so they have aggregated data ready
   initCharts();
   // Initialize the map and pass the chart update callback so clicks update charts
-  initMap({ onFeatureClick: updateCharts });
+  const map = initMap({ onFeatureClick: updateCharts });
+
+  initGeolocate({ map });
 }
 
 if (document.readyState === 'loading') {
