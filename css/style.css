@@ -80,7 +80,13 @@ h1, h2, h3, h4 {
 .search-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+.search-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .search-input {
@@ -90,6 +96,11 @@ h1, h2, h3, h4 {
   padding: 10px 12px;
   font-size: 14px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input.is-loading {
+  background-color: #fafafa;
+  cursor: progress;
 }
 
 .search-input:focus {
@@ -103,11 +114,36 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 0 3px rgb(180 35 24 / 15%);
 }
 
+.search-button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #0f5132;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-button:hover {
+  background: #0a3b23;
+}
+
+.search-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .search-hint {
   font-size: 11px;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.search-hint.error {
+  color: #b42318;
 }
 
 .charts-row {

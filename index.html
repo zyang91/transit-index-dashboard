@@ -29,8 +29,12 @@
             <section class="search-panel" aria-label="Address search">
                 <h3>Find Your Address</h3>
                 <div class="search-field">
-                    <input id="address-search" class="search-input" type="text" placeholder="123 Market St, Philadelphia" autocomplete="off" spellcheck="false">
-                    <small class="search-hint">Powered by Google Places</small>
+                    <div class="search-input-row">
+                        <input id="address-search" class="search-input" type="text" placeholder="123 Market St, Philadelphia" autocomplete="off" spellcheck="false" list="address-suggestions">
+                        <button id="address-search-submit" class="search-button" type="button">Search</button>
+                    </div>
+                    <datalist id="address-suggestions"></datalist>
+                    <small class="search-hint" data-role="search-hint">Philadelphia-only lookup · Powered by the U.S. Census Geocoding API</small>
                 </div>
             </section>
             <section id="filters" class="filters">
