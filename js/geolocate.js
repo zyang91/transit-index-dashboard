@@ -3,19 +3,12 @@ let googleLoaderPromise = null;
 const PUBLIC_GOOGLE_MAPS_KEY = 'AIzaSyB_tq-KyrsmqA6aC3yJrx9yH2PJeBGLfzA';
 
 function resolveApiKey(explicitKey) {
-	return explicitKey || window.GOOGLE_MAPS_KEY || PUBLIC_GOOGLE_MAPS_KEY;
+	return explicitKey || PUBLIC_GOOGLE_MAPS_KEY;
 }
 
 function loadGooglePlaces(explicitKey) {
 	const apiKey = resolveApiKey(explicitKey);
-	if (window.google && window.google.maps && window.google.maps.places) {
-		return Promise.resolve(window.google);
-	}
-
-	if (!apiKey) {
-		return Promise.reject(new Error('Google Maps API key missing. Set window.GOOGLE_MAPS_KEY.'));
-	}
-
+    
 	if (googleLoaderPromise) return googleLoaderPromise;
 
 	googleLoaderPromise = new Promise((resolve, reject) => {
