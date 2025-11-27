@@ -1,3 +1,5 @@
+import _ from 'https://cdn.jsdelivr.net/npm/lodash@4.17.21/+esm';
+
 const CENSUS_ENDPOINT = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress';
 const DEFAULT_BENCHMARK = 'PUBLIC_AR_CURRENT';
 const SUGGESTION_MIN_CHARS = 3;
@@ -95,32 +97,55 @@ async function geocodeAddress(address, benchmark = DEFAULT_BENCHMARK) {
 	};
 }
 
-function debounce(fn, wait = 200) {
-	let timer;
-	return (...args) => {
-		clearTimeout(timer);
-		timer = setTimeout(() => fn(...args), wait);
+function matchToResult(match) {
+	if (!match || !match.coordinates) return null;
+	const latitude = Number(match.coordinates.y);
+	const longitude = Number(match.coordinates.x);
+	if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+	return {
+		latitude,
+		longitude,
+		matchedAddress: match.matchedAddress,
+		raw: match,
 	};
 }
 
 function renderSuggestions(listEl, matches) {
 	if (!listEl) return;
 	listEl.innerHTML = '';
-	matches.slice(0, SUGGESTION_LIMIT).forEach((match) => {
-		const option = document.createElement('option');
-		option.value = match.matchedAddress || '';
-		if (match.coordinates) {
-			option.dataset.lat = match.coordinates.y;
-			option.dataset.lng = match.coordinates.x;
+		const limited = matches.slice(0, SUGGESTION_LIMIT);
+		if (!limited.length) {
+			listEl.classList.remove('has-results');
+			const empty = document.createElement('li');
+			empty.className = 'suggestion-empty';
+			empty.textContent = 'No matches found.';
+			listEl.appendChild(empty);
+			return;
 		}
-		listEl.appendChild(option);
-	});
+		listEl.classList.add('has-results');
+
+		limited.forEach((match) => {
+			const item = document.createElement('li');
+			item.className = 'suggestion-item';
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'suggestion-btn';
+			button.textContent = match.matchedAddress || 'Unknown address';
+			button.addEventListener('click', () => {
+				if (typeof onSelect === 'function') onSelect(match);
+				listEl.innerHTML = '';
+				listEl.classList.remove('has-results');
+			});
+			item.appendChild(button);
+			listEl.appendChild(item);
+		});
 }
 
 export function initGeolocate(options = {}) {
 	const {
 		inputSelector = '#address-search',
 		buttonSelector = '#address-search-submit',
+		geolocateButtonSelector = '#geolocate',
 		statusSelector = '[data-role="search-hint"]',
 		suggestionListSelector = '#address-suggestions',
 		map = null,
@@ -135,8 +160,12 @@ export function initGeolocate(options = {}) {
 	}
 
 	const button = document.querySelector(buttonSelector);
+	const geolocateButton = document.querySelector(geolocateButtonSelector);
 	const statusEl = document.querySelector(statusSelector);
 	const suggestionList = document.querySelector(suggestionListSelector);
+	if (geolocateButton && !geolocateButton.dataset.label) {
+		geolocateButton.dataset.label = geolocateButton.textContent?.trim() || 'Use My Location';
+	}
 
 	let marker = null;
 	if (map && window.mapboxgl) {
@@ -149,33 +178,78 @@ export function initGeolocate(options = {}) {
 		if (button) button.disabled = isLoading;
 	};
 
-	const handleResult = (result) => {
-		if (!result) {
-			markInputError(input);
-			setStatus(statusEl, 'No exact match found. Try a more complete address.', true);
-			return;
-		}
+	const geoButtonLabel = geolocateButton?.dataset.label || 'Use My Location';
+	const setGeoLoading = (isLoading) => {
+		if (!geolocateButton) return;
+		geolocateButton.disabled = isLoading;
+		geolocateButton.classList.toggle('is-loading', isLoading);
+		geolocateButton.textContent = isLoading ? 'Locating…' : geoButtonLabel;
+	};
 
+	const updateMapTo = (lat, lng) => {
 		if (marker && typeof marker.setLngLat === 'function') {
-			marker.setLngLat([result.longitude, result.latitude]).addTo(map);
+			marker.setLngLat([lng, lat]).addTo(map);
 		}
 
 		if (map && typeof map.flyTo === 'function') {
 			map.flyTo({
-				center: [result.longitude, result.latitude],
+				center: [lng, lat],
 				zoom: flyToOptions.zoom || 13,
 				pitch: flyToOptions.pitch || 0,
 				bearing: flyToOptions.bearing || 0,
 				essential: true,
 			});
 		}
+	};
+
+	const handleResult = (result, statusMessage) => {
+		if (!result || !Number.isFinite(result.latitude) || !Number.isFinite(result.longitude)) {
+			markInputError(input);
+			setStatus(statusEl, 'No exact match found. Try a more complete address.', true);
+			return;
+		}
+
+		updateMapTo(result.latitude, result.longitude);
 
 		if (typeof onPlaceResolved === 'function') {
 			onPlaceResolved(result);
 		}
 
-		setStatus(statusEl, `Matched: ${result.matchedAddress}`, false);
+		const label = result.matchedAddress || 'Selected location';
+		setStatus(statusEl, statusMessage || `Matched: ${label}`, false);
 	};
+
+	if (geolocateButton) {
+		if (!('geolocation' in navigator)) {
+			geolocateButton.disabled = true;
+			geolocateButton.title = 'Geolocation is not supported in this browser.';
+		} else {
+			geolocateButton.addEventListener('click', () => {
+				setGeoLoading(true);
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						setGeoLoading(false);
+						const latitude = position.coords.latitude;
+						const longitude = position.coords.longitude;
+						handleResult(
+							{
+								latitude,
+								longitude,
+								matchedAddress: 'Your current location',
+							},
+							'Using your current location.',
+						);
+					},
+					(error) => {
+						setGeoLoading(false);
+						console.error('Geolocation error:', error);
+						setStatus(statusEl, 'Unable to retrieve your location. Please allow access and try again.', true);
+					},
+					{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+				);
+			});
+		}
+	}
 
 	const lookup = async () => {
 		const query = input.value.trim();
@@ -190,6 +264,10 @@ export function initGeolocate(options = {}) {
 			setStatus(statusEl, 'Searching U.S. Census geocoder…', false);
 			const result = await geocodeAddress(query);
 			handleResult(result);
+			if (suggestionList) {
+				suggestionList.innerHTML = '';
+				suggestionList.classList.remove('has-results');
+			}
 		} catch (err) {
 			console.error('Census geocoding failed:', err);
 			markInputError(input);
@@ -215,9 +293,14 @@ export function initGeolocate(options = {}) {
 
 	if (suggestionList) {
 		let activeController = null;
-		const requestSuggestions = debounce(async (value) => {
+		const suggestionFetcher = async (value) => {
 			if (value.length < SUGGESTION_MIN_CHARS) {
+				if (activeController) {
+					activeController.abort();
+					activeController = null;
+				}
 				suggestionList.innerHTML = '';
+				suggestionList.classList.remove('has-results');
 				return;
 			}
 
@@ -227,7 +310,17 @@ export function initGeolocate(options = {}) {
 			activeController = new AbortController();
 			try {
 				const matches = await fetchMatches(value, DEFAULT_BENCHMARK, activeController.signal);
-				renderSuggestions(suggestionList, matches);
+				renderSuggestions(suggestionList, matches, (match) => {
+					const normalized = matchToResult(match);
+					if (!normalized) {
+						markInputError(input);
+						setStatus(statusEl, 'Unable to use that suggestion. Try another.', true);
+						return;
+					}
+					input.value = normalized.matchedAddress || input.value;
+					handleResult(normalized);
+				});
+				suggestionList.classList.toggle('has-results', matches.length > 0);
 				if (matches.length) {
 					setStatus(statusEl, 'Pick an address suggestion or press Enter to search.', false);
 				} else {
@@ -236,13 +329,19 @@ export function initGeolocate(options = {}) {
 			} catch (err) {
 				if (err.name === 'AbortError') return;
 				console.error('Suggestion fetch failed:', err);
+			} finally {
+				activeController = null;
 			}
-		}, SUGGESTION_DEBOUNCE_MS);
+		};
+		const requestSuggestions = typeof _.debounce === 'function'
+			? _.debounce(suggestionFetcher, SUGGESTION_DEBOUNCE_MS)
+			: suggestionFetcher;
 
 		input.addEventListener('input', () => {
 			const value = input.value.trim();
 			if (!value) {
 				suggestionList.innerHTML = '';
+				suggestionList.classList.remove('has-results');
 				return;
 			}
 			requestSuggestions(value);

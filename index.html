@@ -30,10 +30,13 @@
                 <h3>Find Your Address</h3>
                 <div class="search-field">
                     <div class="search-input-row">
-                        <input id="address-search" class="search-input" type="text" placeholder="123 Market St, Philadelphia" autocomplete="off" spellcheck="false" list="address-suggestions">
+                        <input id="address-search" class="search-input" type="text" placeholder="123 Market St" autocomplete="off" spellcheck="false">
                         <button id="address-search-submit" class="search-button" type="button">Search</button>
                     </div>
-                    <datalist id="address-suggestions"></datalist>
+                    <div class="search-actions">
+                        <button id="geolocate" class="geolocate-button" type="button">Use My Location</button>
+                    </div>
+                    <ul id="address-suggestions" class="suggestions-list" role="listbox" aria-live="polite"></ul>
                     <small class="search-hint" data-role="search-hint">Philadelphia-only lookup · Powered by the U.S. Census Geocoding API</small>
                 </div>
             </section>
