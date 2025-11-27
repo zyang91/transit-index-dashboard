@@ -96,6 +96,31 @@ h1, h2, h3, h4 {
   display: block;
 }
 
+.gauge-box {
+  padding: 12px 16px 18px;
+}
+
+.gauge-score {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 6px 0 12px;
+}
+
+.gauge-score-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1f1f1f;
+  line-height: 1;
+}
+
+.gauge-score-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666;
+}
+
 /* Filters UI (checkbox list) */
 .filters { margin-bottom: 12px; }
 
