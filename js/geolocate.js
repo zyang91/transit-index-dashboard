@@ -4,6 +4,9 @@ const PUBLIC_GOOGLE_MAPS_KEY = 'AIzaSyDogPZ_v0_Z9TgTufJTu5aPsgyqXYu8bVI';
 const DEFAULT_PLACE_FIELDS = ['geometry', 'formatted_address', 'address_components'];
 const MIN_QUERY_LENGTH = 3;
 const INPUT_DEBOUNCE_MS = 180;
+const DEFAULT_HINT_MESSAGE = 'Type at least three characters to see suggestions';
+const BROWSER_GEO_TIMEOUT_MS = 10000;
+const BROWSER_GEO_MAX_AGE_MS = 60000;
 
 function resolveApiKey(explicitKey) {
 	return explicitKey || window.GOOGLE_MAPS_KEY || PUBLIC_GOOGLE_MAPS_KEY;
@@ -69,11 +72,22 @@ function updateHint(hintEl, message, isError = false) {
 	hintEl.classList.toggle('error', Boolean(isError));
 }
 
+function setButtonLoadingState(button, isLoading, loadingLabel = 'Locating…') {
+	if (!button) return;
+	if (!button.dataset.defaultLabel) {
+		button.dataset.defaultLabel = button.textContent.trim();
+	}
+	button.disabled = isLoading;
+	button.classList.toggle('is-loading', isLoading);
+	button.textContent = isLoading ? loadingLabel : button.dataset.defaultLabel;
+}
+
 export async function initGeolocate(options = {}) {
 	const {
 		inputSelector = '#address-search',
 		suggestionsSelector = '#address-suggestions',
 		hintSelector = '#address-search-hint',
+		geolocateButtonSelector = '#use-my-location',
 		map = null,
 		apiKey = PUBLIC_GOOGLE_MAPS_KEY,
 		flyToOptions = {},
@@ -85,6 +99,7 @@ export async function initGeolocate(options = {}) {
 	const input = document.querySelector(inputSelector);
 	const suggestionsEl = document.querySelector(suggestionsSelector);
 	const hintEl = document.querySelector(hintSelector);
+	const geolocateButton = document.querySelector(geolocateButtonSelector);
 	if (!input) {
 		console.warn('initGeolocate: input element not found');
 		return null;
@@ -102,10 +117,13 @@ export async function initGeolocate(options = {}) {
 
 	const autocompleteService = new google.maps.places.AutocompleteService();
 	const placesService = new google.maps.places.PlacesService(document.createElement('div'));
+	const geocoder = new google.maps.Geocoder();
 	let marker = null;
 	if (map && window.mapboxgl) {
 		marker = new window.mapboxgl.Marker({ color: '#0f5132' });
 	}
+
+	const setGeolocateButtonState = (isLoading) => setButtonLoadingState(geolocateButton, isLoading);
 
 	let requestToken = 0;
 	const clearSuggestions = () => {
@@ -141,7 +159,7 @@ export async function initGeolocate(options = {}) {
 		});
 	};
 
-	const applyPlaceToMap = (place) => {
+	const applyPlaceToMap = (place, { hintMessage = 'Showing Google suggestions', isError = false } = {}) => {
 		if (!place || !place.geometry || !place.geometry.location) {
 			markInputError(input);
 			updateHint(hintEl, 'Unable to locate that address', true);
@@ -173,7 +191,7 @@ export async function initGeolocate(options = {}) {
 			onPlaceResolved({ place, latitude: lat, longitude: lng });
 		}
 
-		updateHint(hintEl, 'Showing Google suggestions');
+		updateHint(hintEl, hintMessage, isError);
 	};
 
 	const handleSuggestionSelection = (prediction) => {
@@ -237,6 +255,67 @@ export async function initGeolocate(options = {}) {
 		}, 150);
 	};
 
+	const handleGeolocateClick = () => {
+		if (!navigator.geolocation) {
+			updateHint(hintEl, 'Your browser does not support geolocation', true);
+			markInputError(input);
+			return;
+		}
+
+		clearSuggestions();
+		setGeolocateButtonState(true);
+		updateHint(hintEl, 'Locating your position…');
+
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const { latitude, longitude } = position.coords;
+				const location = { lat: latitude, lng: longitude };
+				const fallbackPlace = { geometry: { location } };
+
+				const finish = (place, hintMessage) => {
+					const normalizedPlace = place && place.geometry ? place : { ...place, geometry: { location } };
+					const displayAddress = normalizedPlace.formatted_address || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+					normalizedPlace.formatted_address = displayAddress;
+					input.value = displayAddress;
+					applyPlaceToMap(normalizedPlace, { hintMessage });
+					setGeolocateButtonState(false);
+				};
+
+				geocoder.geocode({ location }, (results, status) => {
+					if (status === 'OK' && results && results.length) {
+						finish(results[0], 'Centered on your current location');
+						return;
+					}
+					finish(fallbackPlace, 'Centered on detected coordinates');
+				});
+			},
+			(error) => {
+				setGeolocateButtonState(false);
+				let message = 'Unable to get your location';
+				switch (error.code) {
+					case 1:
+						message = 'Location permission was denied';
+						break;
+					case 2:
+						message = 'Unable to determine your location';
+						break;
+					case 3:
+						message = 'Timed out while finding your location';
+						break;
+					default:
+						break;
+				}
+				updateHint(hintEl, message, true);
+				markInputError(input);
+			},
+			{
+				enableHighAccuracy: true,
+				timeout: BROWSER_GEO_TIMEOUT_MS,
+				maximumAge: BROWSER_GEO_MAX_AGE_MS,
+			}
+		);
+	};
+
 	input.addEventListener('input', handleInputChange);
 	input.addEventListener('focus', handleInputChange);
 	input.addEventListener('blur', handleBlur);
@@ -249,7 +328,11 @@ export async function initGeolocate(options = {}) {
 		}, true);
 	}
 
-	updateHint(hintEl, 'Type at least three characters to see suggestions');
+	if (geolocateButton) {
+		geolocateButton.addEventListener('click', handleGeolocateClick);
+	}
+
+	updateHint(hintEl, DEFAULT_HINT_MESSAGE);
 
 	return {
 		clear: clearSuggestions,
@@ -257,6 +340,9 @@ export async function initGeolocate(options = {}) {
 			input.removeEventListener('input', handleInputChange);
 			input.removeEventListener('focus', handleInputChange);
 			input.removeEventListener('blur', handleBlur);
+			if (geolocateButton) {
+				geolocateButton.removeEventListener('click', handleGeolocateClick);
+			}
 			clearSuggestions();
 		},
 	};

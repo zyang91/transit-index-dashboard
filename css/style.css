@@ -141,20 +141,21 @@ h1, h2, h3, h4 {
   margin-top: 4px;
 }
 
+
 .geolocate-button {
   border: 1px solid #0f5132;
-  background: transparent;
-  color: #0f5132;
+  background: #0f5132;
+  color: #fff;
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
 .geolocate-button:hover:not(:disabled) {
-  background: #0f5132;
+  background: #0a3b23;
   color: #fff;
 }
 
@@ -164,7 +165,7 @@ h1, h2, h3, h4 {
 }
 
 .geolocate-button:disabled {
-  opacity: 0.4;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
