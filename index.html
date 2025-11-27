@@ -26,6 +26,13 @@
             <div id="map"></div>
         </div>
         <aside class="sidebar">
+            <section class="search-panel" aria-label="Address search">
+                <h3>Find Your Address</h3>
+                <div class="search-field">
+                    <input id="address-search" class="search-input" type="text" placeholder="123 Market St, Philadelphia" autocomplete="off" spellcheck="false">
+                    <small class="search-hint">Powered by Google Places</small>
+                </div>
+            </section>
             <section id="filters" class="filters">
                 <h3>Filter by Index threshold</h3>
                     <div class="filter-scroll" role="toolbar" aria-label="Threshold slider">
@@ -59,6 +66,9 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
     <!-- D3 (for charts) - loaded as a global d3 variable -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        window.GOOGLE_MAPS_KEY = window.GOOGLE_MAPS_KEY || 'YOUR_GOOGLE_MAPS_API_KEY';
+    </script>
     <script type="module" src="js/index.js"></script>
 </body>
 </html>
