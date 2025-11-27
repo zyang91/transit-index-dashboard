@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-</html>
 <body>
     <header class="app-header">
         <div class="container">
@@ -29,8 +28,11 @@
             <section class="search-panel" aria-label="Address search">
                 <h3>Find Your Address</h3>
                 <div class="search-field">
-                    <input id="address-search" class="search-input" type="text" placeholder="123 Market St, Philadelphia" autocomplete="off" spellcheck="false">
-                    <small class="search-hint">Powered by Google Places</small>
+                    <div class="search-input-row">
+                        <input id="address-search" class="search-input" type="search" placeholder="123 Market St, Philadelphia" autocomplete="street-address" spellcheck="false" aria-autocomplete="list" aria-controls="address-suggestions">
+                    </div>
+                    <ul id="address-suggestions" class="suggestions-list" role="listbox" aria-label="Address suggestions" aria-live="polite"></ul>
+                    <small class="search-hint" id="address-search-hint">Powered by Google Places</small>
                 </div>
             </section>
             <section id="filters" class="filters">
