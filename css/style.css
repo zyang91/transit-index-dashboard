@@ -30,9 +30,12 @@ h1, h2, h3, h4 {
 
 .app-header h1 {
   margin: 0;
-  font-size: 24px;
-  font-family: 'Playfair Display', Inter, serif;
+  font-size: clamp(30px, 4vw, 44px);
+  font-family: 'Fraunces', 'Playfair Display', Inter, serif;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0f5132;
 }
 
 .content {
@@ -61,6 +64,14 @@ h1, h2, h3, h4 {
   background: transparent;
   border-left: 1px solid rgb(0 0 0 / 4%);
   overflow: auto;
+}
+
+#info {
+  margin-top: 24px;
+}
+
+#chart {
+  margin-top: 24px;
 }
 
 .overlay {
@@ -242,6 +253,97 @@ h1, h2, h3, h4 {
   margin: 0 0 8px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.chart-note {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+.insight-card,
+.travel-charts {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border: 1px solid rgb(0 0 0 / 6%);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgb(0 0 0 / 4%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#chart > .insight-card:first-child {
+  margin-top: 0;
+}
+
+.insight-card__header,
+.travel-charts__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.section-tag {
+  margin: 0 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.insight-card__header h2,
+.travel-charts__header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.insight-card__note,
+.travel-charts__note {
+  flex: 1 1 220px;
+  margin: 0;
+  font-size: 13px;
+  color: #5a5a5a;
+}
+
+.travel-charts__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.travel-charts__grid article {
+  background: #fff8f0;
+  border: 1px solid rgb(0 0 0 / 5%);
+  border-radius: 12px;
+  padding: 12px 12px 16px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 40%);
+}
+
+.travel-charts__grid h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.credits {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgb(0 0 0 / 6%);
+  border-radius: 10px;
+  background: #fff8f0;
+  font-size: 13px;
+  color: #4a4a4a;
+}
+
+.credits p {
+  margin: 0;
+}
+
+.credits p + p {
+  margin-top: 6px;
 }
 
 .chart-box svg {
