@@ -31,7 +31,7 @@ h1, h2, h3, h4 {
 .app-header h1 {
   margin: 0;
   font-size: clamp(30px, 4vw, 44px);
-  font-family: 'Fraunces', 'Playfair Display', Inter, serif;
+  font-family: Fraunces, 'Playfair Display', Inter, serif;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -165,11 +165,6 @@ h1, h2, h3, h4 {
   transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
-.geolocate-button:hover:not(:disabled) {
-  background: #0a3b23;
-  color: #fff;
-}
-
 .geolocate-button.is-loading {
   opacity: 0.7;
   cursor: progress;
@@ -179,6 +174,12 @@ h1, h2, h3, h4 {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.geolocate-button:hover:not(:disabled) {
+  background: #0a3b23;
+  color: #fff;
+}
+
 
 .suggestions-list {
   list-style: none;
