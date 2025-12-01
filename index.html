@@ -100,6 +100,22 @@
         </aside>
     </main>
 
+    <section id="intro-modal" class="intro-modal" role="dialog" aria-modal="true" aria-labelledby="intro-modal-title">
+        <div class="intro-modal-content">
+            <p class="section-tag">Start here</p>
+            <h2 id="intro-modal-title">Welcome to the Transit Index Dashboard</h2>
+            <p class="intro-modal-lede">Explore how Philadelphia neighborhoods connect to transit. This dashboard combines station density, trip duration, and travel mode insights to help you spot where access is strong—or needs improvement.</p>
+            <ul class="intro-modal-list">
+                <li>Use the address search or “Use my location” to jump to any place in the city.</li>
+                <li>Click a census tract on the map to update the transit score, station chart, and travel insights.</li>
+                <li>Adjust the index threshold slider to highlight tracts that meet your minimum service level.</li>
+            </ul>
+            <div class="intro-modal-actions">
+                <button type="button" class="intro-modal-button" data-intro-continue>Continue to dashboard</button>
+            </div>
+        </div>
+    </section>
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
     <!-- D3 (for charts) - loaded as a global d3 variable -->
     <script src="https://d3js.org/d3.v7.min.js"></script>

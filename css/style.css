@@ -347,6 +347,91 @@ h1, h2, h3, h4 {
   margin-top: 6px;
 }
 
+.intro-modal {
+  position: fixed;
+  inset: 0;
+  background: rgb(15 81 50 / 55%);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 2000;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.intro-modal--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.intro-modal-content {
+  max-width: 560px;
+  width: 100%;
+  background: #fffdf9;
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgb(0 0 0 / 8%);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 18%);
+}
+
+.intro-modal h2 {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-size: 28px;
+}
+
+.intro-modal-lede {
+  margin: 0 0 18px;
+  font-size: 15px;
+  color: #3c3c3c;
+}
+
+.intro-modal-list {
+  margin: 0 0 24px;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.intro-modal-list li + li {
+  margin-top: 8px;
+}
+
+.intro-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.intro-modal-button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #0f5132;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 30px rgb(15 81 50 / 25%);
+}
+
+.intro-modal-button:hover {
+  background: #0a3b23;
+  transform: translateY(-1px);
+}
+
+.intro-modal-button:focus-visible {
+  outline: 3px solid rgb(15 81 50 / 45%);
+  outline-offset: 2px;
+}
+
+body.intro-modal-open {
+  overflow: hidden;
+}
+
 .chart-box svg {
   width: 100%;
   display: block;

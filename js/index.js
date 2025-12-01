@@ -3,6 +3,7 @@ import { initMap } from './map.js';
 import { initCharts, updateCharts } from './chart.js';
 import { initStationChart, updateStationChart } from './graph.js';
 import { initGeolocate } from './geolocate.js';
+import { initIntroPrompt } from './prompt.js';
 
 function handleFeatureSelection(feature) {
 	updateCharts(feature);
@@ -10,6 +11,7 @@ function handleFeatureSelection(feature) {
 }
 
 function start() {
+  initIntroPrompt();
   // Initialize the map with defaults (reads token from window.MAPBOX_TOKEN)
   // Initialize charts first so they have aggregated data ready
   initCharts();
