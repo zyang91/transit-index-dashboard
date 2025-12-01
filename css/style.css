@@ -360,7 +360,7 @@ h1, h2, h3, h4 {
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-.intro-modal--hidden {
+.intro-modal-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;

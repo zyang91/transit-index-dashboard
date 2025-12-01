@@ -1,4 +1,4 @@
-const INTRO_MODAL_HIDDEN_CLASS = 'intro-modal--hidden';
+const INTRO_MODAL_HIDDEN_CLASS = 'intro-modal-hidden';
 
 function focusPrimaryInput() {
   const addressInput = document.getElementById('address-search');
