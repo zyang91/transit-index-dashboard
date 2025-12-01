@@ -10,7 +10,7 @@
     <!-- Primary UI font: Inter (clean, modern, highly-legible) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <!-- Optional decorative serif fonts (kept for headings if desired) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -36,32 +36,66 @@
                     <small class="search-hint" id="address-search-hint">Powered by Google Places</small>
                 </div>
             </section>
-            <section id="filters" class="filters">
-                <h3>Filter by Index threshold</h3>
-                    <div class="filter-scroll" role="toolbar" aria-label="Threshold slider">
-                        <div class="slider-wrap">
-                            <input class="threshold-slider" type="range" min="1" max="100" step="1" value="1" aria-label="Index threshold slider">
-                            <div class="slider-controls">
-                                <div class="threshold-value" aria-live="polite"></div>
-                                <button class="threshold-reset">Reset</button>
-                            </div>
+            <section id="filters" class="filters insight-card" aria-label="Index threshold filter">
+                <header class="insight-card__header">
+                    <div>
+                        <p class="section-tag">Filters</p>
+                        <h2>Filter by Index Threshold</h2>
+                    </div>
+                    <p class="insight-card__note">Adjust the slider to highlight tracts that meet your minimum transit index score.</p>
+                </header>
+                <div class="filter-scroll" role="toolbar" aria-label="Threshold slider">
+                    <div class="slider-wrap">
+                        <input class="threshold-slider" type="range" min="1" max="100" step="1" value="1" aria-label="Index threshold slider">
+                        <div class="slider-controls">
+                            <div class="threshold-value" aria-live="polite"></div>
+                            <button class="threshold-reset">Reset</button>
                         </div>
                     </div>
-            </section>
-            <section id="chart"><!-- chart.js can render here -->
-                <h2>Transit Index Score</h2>
-                <div id="chart-index" class="chart-box gauge-box"></div>
-                <h2>Travel Time and Mode</h2>
-                <div class="charts-row">
-                    <h3>Travel Time</h3>
-                    <div id="chart-time" class="chart-box"></div>
-                    <h3>Travel Mode</h3>
-                    <div id="chart-mode" class="chart-box"></div>
                 </div>
             </section>
-            <section id="info">
-                <h3>Info</h3>
-                <p>Additional text and KPIs go here.</p>
+            <section id="chart" aria-label="Transit performance">
+                <section class="insight-card" aria-label="Transit index score">
+                    <header class="insight-card__header">
+                        <div>
+                            <p class="section-tag">Transit index</p>
+                            <h2>Transit Index Score</h2>
+                        </div>
+                        <p class="insight-card__note">Composite score highlighting overall transit access for the selected tract.</p>
+                    </header>
+                    <div id="chart-index" class="chart-box gauge-box"></div>
+                </section>
+            <section id="info" class="insight-card" aria-label="Transit access snapshot">
+                <header class="insight-card__header">
+                    <div>
+                        <p class="section-tag">Transit access</p>
+                        <h2>Transit Access Snapshot</h2>
+                    </div>
+                    <p class="insight-card__note">Select a census tract to see how many bus, metro, and trolley stations serve that area.</p>
+                </header>
+                <div id="station-chart" class="chart-box"></div>
+            </section>
+                <section class="travel-charts" aria-label="Travel patterns">
+                    <header class="travel-charts__header">
+                        <div>
+                            <p class="section-tag">Travel patterns</p>
+                            <h2>Travel Time &amp; Mode</h2>
+                        </div>
+                        <p class="travel-charts__note">Compare how residents commute and how long it takes across selected tracts.</p>
+                    </header>
+                    <div class="travel-charts__grid">
+                        <article>
+                            <div id="chart-time" class="chart-box"></div>
+                        </article>
+                        <article>
+                            <div id="chart-mode" class="chart-box"></div>
+                        </article>
+                    </div>
+                </section>
+            </section>
+            <section class="credits" aria-label="Project credits">
+                <p>Made by <strong>Zhanchao Yang</strong></p>
+                <p>Data support graciously provided by <strong>SEPTA</strong></p>
             </section>
         </aside>
     </main>
