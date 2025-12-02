@@ -6,8 +6,8 @@ import { initGeolocate } from './geolocate.js';
 import { initIntroPrompt } from './prompt.js';
 
 function handleFeatureSelection(feature) {
-	updateCharts(feature);
-	updateStationChart(feature);
+  updateCharts(feature);
+  updateStationChart(feature);
 }
 
 function start() {
