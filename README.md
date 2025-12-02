@@ -22,9 +22,7 @@ This dashboard empowers housing seekers and tenants to make informed decisions a
 
 - **Interactive Map**: Explore Philadelphia neighborhoods with an intuitive map interface powered by Mapbox
 - **Transit Index Visualization**: View transit accessibility scores at the census tract level
-- **Index Breakdown**: Understand the key factors that contribute to each area's transit score
 - **Geographic Search**: Find specific neighborhoods or addresses
-- **Data-Driven Insights**: Make informed housing decisions based on comprehensive transit analysis
 
 ## Usage
 
