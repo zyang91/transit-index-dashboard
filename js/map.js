@@ -1,4 +1,71 @@
 /* global mapboxgl */
+
+const INDEX_LEGEND = [
+  { label: '1–10', color: '#80ffdb' },
+  { label: '10–20', color: '#72efdd' },
+  { label: '20–30', color: '#64dfdf' },
+  { label: '30–40', color: '#56cfe1' },
+  { label: '40–50', color: '#48bfe3' },
+  { label: '50–60', color: '#4ea8de' },
+  { label: '60–70', color: '#5390d9' },
+  { label: '70–80', color: '#5e60ce' },
+  { label: '80–90', color: '#6930c3' },
+  { label: '90–100', color: '#7400b8' },
+];
+
+class LegendControl {
+  constructor(items = []) {
+    this.items = items;
+    this._map = null;
+    this._container = null;
+  }
+
+  onAdd(map) {
+    this._map = map;
+    const container = document.createElement('div');
+    container.className = 'mapboxgl-ctrl map-legend';
+    container.setAttribute('aria-label', 'Transit index legend');
+
+    const title = document.createElement('p');
+    title.className = 'map-legend-title';
+    title.textContent = 'Transit Index';
+    container.appendChild(title);
+
+    const list = document.createElement('ul');
+    list.className = 'map-legend-list';
+
+    this.items.forEach((item) => {
+      const li = document.createElement('li');
+      li.className = 'map-legend-item';
+
+      const swatch = document.createElement('span');
+      swatch.className = 'map-legend-swatch';
+      swatch.style.backgroundColor = item.color;
+      swatch.setAttribute('aria-hidden', 'true');
+
+      const label = document.createElement('span');
+      label.className = 'map-legend-label';
+      label.textContent = item.label;
+
+      li.appendChild(swatch);
+      li.appendChild(label);
+      list.appendChild(li);
+    });
+
+    container.appendChild(list);
+    this._container = container;
+    return container;
+  }
+
+  onRemove() {
+    if (this._container && this._container.parentNode) {
+      this._container.parentNode.removeChild(this._container);
+    }
+    this._map = null;
+    this._container = null;
+  }
+}
+
 function initMap(options = {}) {
   const container = options.container || 'map';
   const style = options.style || 'mapbox://styles/mapbox/light-v11';
@@ -12,6 +79,7 @@ function initMap(options = {}) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiemhhbmNoYW8iLCJhIjoiY21nYm1mOGNpMTlycTJtb2xuczUwdjY1aCJ9.KRjlJ3Siuf2p0OKSsngcGw';
 
   const map = new mapboxgl.Map({ container, style, center, zoom });
+  map.addControl(new LegendControl(INDEX_LEGEND), 'bottom-right');
 
   // Disable user zoom controls: prevent scroll-wheel, double-click, touch-pinch zooming.
   // We intentionally do NOT add the NavigationControl (zoom buttons) so users cannot change zoom.
