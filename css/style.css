@@ -355,7 +355,7 @@ h1, h2, h3, h4 {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  padding: 40px;
   z-index: 2000;
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
@@ -367,11 +367,11 @@ h1, h2, h3, h4 {
 }
 
 .intro-modal-content {
-  max-width: 560px;
+  max-width: 720px;
   width: 100%;
   background: #fffdf9;
   border-radius: 20px;
-  padding: 32px;
+  padding: 48px;
   border: 1px solid rgb(0 0 0 / 8%);
   box-shadow: 0 30px 80px rgb(0 0 0 / 18%);
 }
@@ -379,25 +379,45 @@ h1, h2, h3, h4 {
 .intro-modal h2 {
   margin-top: 8px;
   margin-bottom: 12px;
-  font-size: 28px;
+  font-size: 34px;
 }
 
 .intro-modal-lede {
   margin: 0 0 18px;
-  font-size: 15px;
+  font-size: 17px;
   color: #3c3c3c;
 }
 
 .intro-modal-list {
   margin: 0 0 24px;
   padding-left: 20px;
-  font-size: 14px;
+  font-size: 16px;
   color: #444;
   line-height: 1.5;
 }
 
 .intro-modal-list li + li {
   margin-top: 8px;
+}
+
+.intro-modal-note {
+  margin: 0 0 24px;
+  font-size: 15px;
+  color: #4b4b4b;
+  line-height: 1.6;
+}
+
+.inline-link {
+  color: #0f5132;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.inline-link:hover,
+.inline-link:focus-visible {
+  color: #0c3f27;
+  text-decoration: underline;
 }
 
 .intro-modal-actions {
