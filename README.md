@@ -1,8 +1,5 @@
 # Philadelphia Transit Index Dashboard
 
-**Target Date**: 2025.11.30 (without the interaction feature)<br>
-**Target Date**: 2025.12.10 (with interaction feature)
-
 **Zhanchao Yang**
 > Department of City and Regional Planning <br>
 > Weitzman School of Design, University of Pennsylvania
