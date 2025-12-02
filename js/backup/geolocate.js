@@ -110,7 +110,7 @@ function matchToResult(match) {
   };
 }
 
-function renderSuggestions(listEl, matches) {
+function renderSuggestions(listEl, matches, onSelect) {
   if (!listEl) return;
   listEl.innerHTML = '';
   const limited = matches.slice(0, SUGGESTION_LIMIT);
