@@ -1,4 +1,6 @@
 name: Lint the JavaScript code style
+permissions:
+  contents: read
 
 on:
   pull_request:
